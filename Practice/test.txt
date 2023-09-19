@@ -1,0 +1,59 @@
+SW1 is the root bridge.
+SW1: 
+G0/0 : DS G0/1 : DS
+SW2:
+G0/0 : Root port 
+G0/1: DS
+SW3:
+G0/2: Root port G0/0: DS G0/1: Backup
+SW4: 
+G0/1: Root port G0/0: Alternate
+  so why
+19:53
+did SW4 choose G0/1 over G0/0? It’s because the neighbor bridge ID is lower via G0/1, because SW2 has a lower MAC address
+20:03
+than SW3
+
+How about SW3’s G0/1 and SW4’s G0/0? SW3’s G0/1 receives the superior BPDU, with the lower port ID, from the same switch, so
+20:43
+it's a backup port. SW4’s G0/0 receives the superior BPDU from a different switch, so it is an alternate
+20:52
+port.
+
+For example, in this network traffic from PC1 to PC2 usually follows this path.
+26:04
+But what if this connection is cut off? This switch will think: I can’t reach this neighbor anymore.
+26:10
+I’ll clear all entries for this interface from my MAC table, and its other interface will
+26:15
+become the root port. Then, if PC1 wants to send traffic to PC2 again, it will go through the normal process
+26:23
+of flooding until it learns the MAC address on this new interface, and traffic will now follow this path.
+26:29
+That’s just a quick look at how topology changes are handled in rapid STP.
+
+The listening state was deemed unnecessary, and in fact the learning state is often skipped
+32:19
+due to the built-in features of rapid STP, like UplinkFast and BackboneFast.
+
+
+
+
+
+RSTP Quiz 4
+
+SW1 is the root bridge,
+G0/0: DS G0/1: DS G0/2: DS G0/3: DS
+
+SW2:
+g0/0: Root port G0/1: DS G0/2: Backup G0/3: DS
+(Why was an interface on SW2 and not SW4 selected to be designated?
+Because SW2 has the lower root cost.)
+SW3:
+G0/0: DS G0/1: Alternate G0/2: Root port (cause neighbor port ID G0/1 is lower) G0/3: DS
+
+SW4:
+G0/0; Root port  G0/1: Alternate G0/2: DS
+
+
+Frames are sent to the neighboring switch to see if it wants to form an EtherChannel, and then the switches agree upon either forming an EtherChannel or not.
